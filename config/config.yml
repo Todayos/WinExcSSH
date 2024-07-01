@@ -1,0 +1,30 @@
+# windows下快捷方式启动Linux服务
+
+HostInfo:
+  IP: "192.167.0.12"
+  Port: 22
+
+UserInfo:
+  Username: "root"
+  Password: "123456"
+
+PceKeys:
+  - "exstudio"
+  - "exrun__"
+  - "exrun_rtc"
+  - "sysmanage"
+  - "config_center"
+  - "IIFExds"
+  - "IIFExmocker"
+  - "IIFExrun"
+
+TfiifPath: "/home/njtf-shiyan/aipod"
+StartCommand: "sh start-svc.sh"
+StopCommand: "sh stop-svc.sh"
+
+
+
+
+
+
+
