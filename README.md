@@ -25,3 +25,9 @@
 > 执行 python start.py 命令可启动服务
 > 
 > 执行上述命令前，请确认该包已被添加进python包查找路径
+
+## 设置windows快捷方式
+修改TFIIF.bat脚本
+如: cmd /k python C:\Projects\start-tfiif-package\WinExcSSH\start.py，将C:\Projects\start-tfiif-package\WinExcSSH\start.py启动文件路径更换为当前环境中start.py文件所在的路径，在文件系统中打开该文件，发送快捷方式到桌面即可完成快捷方式的创建,后续双击桌面快捷方式即可启动服务器中的相关服务。
+>
+> 快捷方式可重新命名，如将上述发送的快捷方式名称"TFIIF.bat - 快捷方式"重命名为"TFIIF"

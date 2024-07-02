@@ -1,0 +1,1 @@
+cmd /k python C:\Projects\start-tfiif-package\WinExcSSH\start.py
