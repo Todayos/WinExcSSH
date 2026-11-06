@@ -1,24 +1,19 @@
+"""File logging with a portable default and an optional path override."""
+
 import logging
 import os
+from pathlib import Path
 
 
-file_path = os.path.dirname(__file__)
-
-
-# 创建一个Logger对象
-logger = logging.getLogger()
+logger = logging.getLogger("SSHServiceRunner")
 logger.setLevel(logging.INFO)
+logger.propagate = False
 
-log_path = os.path.join(os.path.dirname(file_path), "logs/tfs.log")
-# if not os.path.exists(log_path):
-#     os.mkdir(log_path)
-
-# 创建一个文件处理器
-file_handler = logging.FileHandler(log_path, mode="a")
-
-# 创建一个日志格式化器
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-file_handler.setFormatter(formatter)
-
-# 将文件处理器添加到Logger中
-logger.addHandler(file_handler)
+if not logger.handlers:
+    default_path = Path(__file__).resolve().parent.parent / "logs" / "ssh-service-runner.log"
+    configured_path = os.environ.get("SSH_SERVICE_RUNNER_LOG_FILE", os.environ.get("WINEXCSSH_LOG_FILE"))
+    log_path = Path(configured_path if configured_path is not None else default_path).expanduser()
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    file_handler = logging.FileHandler(log_path, mode="a", encoding="utf-8")
+    file_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+    logger.addHandler(file_handler)

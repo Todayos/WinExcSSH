@@ -2,14 +2,19 @@
 
 """
 @Author: Cooper
-@File: start.py    
-@Modify Time: 2024/7/1 11:31  
-@Description: 
+@File: start.py
+@Modify Time: 2024/7/1 11:31
+@Description:
 """
 
-from WinExcSSH.config.config import Config
-from WinExcSSH.core.service import Service
-from WinExcSSH.units.logger import logger
+if __package__:
+    from .config.config import Config
+    from .core.service import Service
+    from .units.logger import logger
+else:
+    from config.config import Config
+    from core.service import Service
+    from units.logger import logger
 
 
 def start():
@@ -25,8 +30,8 @@ def start():
     service.connect()
     success, result = service.checker_service(service_keywords=config.process_keywords, log=False)
     logger.info(result)
-    service.execute(path=config.tfiif_path, command=config.stop_command)
-    service.execute(path=config.tfiif_path, command=config.start_command)
+    service.execute(path=config.service_path, command=config.stop_command)
+    service.execute(path=config.service_path, command=config.start_command)
     service.dispose()
 
 

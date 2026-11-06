@@ -2,9 +2,9 @@
 
 """
 @Author: Cooper
-@File: yaml_helper.py    
-@Modify Time: 2024/3/21 10:24  
-@Description: 
+@File: yaml_helper.py
+@Modify Time: 2024/3/21 10:24
+@Description:
 """
 
 import os
@@ -19,9 +19,9 @@ class YamlHelper:
     @staticmethod
     def parser_yaml(yaml_path: str):
         if not os.path.exists(yaml_path):
-            raise FileNotFoundError(f"文件路径【{yaml_path}】不存在, 请确认该路径是否正确")
+            raise FileNotFoundError(f"Configuration file not found: {yaml_path}")
         with open(yaml_path, mode="r", encoding="utf-8") as f:
             yaml_data = f.read()
-        yaml_config = yaml.load(yaml_data, Loader=yaml.FullLoader)
+        yaml_config = yaml.safe_load(yaml_data)
         return yaml_config
 

@@ -2,12 +2,15 @@
 
 """
 @Author: Cooper
-@File: service.py    
-@Modify Time: 2024/7/1 11:32  
-@Description: 
+@File: service.py
+@Modify Time: 2024/7/1 11:32
+@Description:
 """
 import paramiko
-from WinExcSSH.units.logger import logger
+if __package__ and "." in __package__:
+    from ..units.logger import logger
+else:
+    from units.logger import logger
 
 
 class Service:
@@ -28,11 +31,11 @@ class Service:
 
     def connect(self):
         if self.ssh_client is None:
-            raise Exception("客户端未初始化")
+            raise Exception("SSH client is not initialized.")
         try:
             self.ssh_client.connect(self.ip, self.port, self.username, self.password, timeout=self.timeout)
         except paramiko.ssh_exception.AuthenticationException:
-            raise Exception("账号密码错误, 请确认")
+            raise Exception("SSH authentication failed. Check your username and password.")
 
     def checker_service(self, service_keywords: list, log: bool = True, decode: str = "UTF-8"):
         check: dict = {}

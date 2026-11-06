@@ -1,30 +1,19 @@
-# windows下快捷方式启动Linux服务
-
+# Copy this template to config.local.yml, then fill in your own settings.
+# config.local.yml is ignored by Git. Never commit real credentials here.
 HostInfo:
-  IP: "192.167.0.12"
+  IP: ""  # SSH hostname or IP address, for example ssh.example.com.
   Port: 22
 
 UserInfo:
-  Username: "root"
-  Password: "123456"
+  Username: ""
+  # Prefer SSH_SERVICE_RUNNER_PASSWORD instead of storing a password in this file.
+  # An empty password preserves Paramiko's default SSH key/agent lookup.
+  Password: ""
 
-PceKeys:
-  - "exstudio"
-  - "exrun__"
-  - "exrun_rtc"
-  - "sysmanage"
-  - "config_center"
-  - "IIFExds"
-  - "IIFExmocker"
-  - "IIFExrun"
+# Keywords used by the existing remote ps/grep process check.
+PceKeys: []  # For example: ["my-service"]
 
-TfiifPath: "/home/njtf-shiyan/aipod"
-StartCommand: "sh start-svc.sh"
-StopCommand: "sh stop-svc.sh"
-
-
-
-
-
-
-
+# Remote directory containing your service scripts, for example /opt/my-service.
+ServicePath: ""
+StartCommand: ""  # For example: ./start.sh
+StopCommand: ""  # For example: ./stop.sh

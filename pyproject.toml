@@ -1,0 +1,14 @@
+[project]
+name = "ssh-service-runner"
+version = "0.1.0"
+description = "Restart remote services over SSH from a configurable Python script."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = [
+    "paramiko>=3.4,<5",
+    "PyYAML>=6,<7",
+]
+
+[tool.uv]
+package = false

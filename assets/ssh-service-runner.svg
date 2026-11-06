@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <title>SSH Service Runner</title>
+  <desc>A terminal window with a restart arrow, representing remote service restarts over SSH.</desc>
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="#101E31"/>
+  <rect x="29" y="29" width="454" height="454" rx="107" stroke="#29435F" stroke-width="10"/>
+  <rect x="82" y="112" width="348" height="260" rx="32" fill="#19314B" stroke="#53718D" stroke-width="10"/>
+  <path d="M87 178H425" stroke="#53718D" stroke-width="10"/>
+  <circle cx="115" cy="145" r="8" fill="#77E0CE"/>
+  <circle cx="143" cy="145" r="8" fill="#8EA6BB"/>
+  <path d="M136 228L178 268L136 308" stroke="#EDF6FF" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M213 306H264" stroke="#EDF6FF" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="356" cy="354" r="103" fill="#101E31"/>
+  <path d="M417 297A82 82 0 1 0 435 377" stroke="#77E0CE" stroke-width="22" stroke-linecap="round"/>
+  <path d="M380 299L429 309L427 260" fill="#77E0CE" stroke="#77E0CE" stroke-width="7" stroke-linejoin="round"/>
+</svg>

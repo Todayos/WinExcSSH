@@ -1,5 +1,31 @@
-logs
+# Local configuration and secrets
+/config/config.local*.yml
+/config/config.local*.yaml
+.env
+.env.*
+!.env.example
+/.aws/
+/.codex/
+/.agents/
+
+# Runtime output
+/logs/
 *.log
-.idea
-*/__pycache__/*
-*.pyc
+
+# Python and uv
+__pycache__/
+*.py[cod]
+.venv/
+.uv-cache/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
