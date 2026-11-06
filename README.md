@@ -1,6 +1,21 @@
-# SSH Service Runner
+<p align="center">
+  <img src="assets/ssh-service-runner.png" alt="SSH Service Runner icon" width="112" height="112">
+</p>
 
-[English](README.md) | [简体中文](README.zh-CN.md)
+<h1 align="center">SSH Service Runner</h1>
+
+<p align="center">
+  <a href="pyproject.toml"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white" alt="Python 3.10 or newer"></a>
+  <a href="uv.lock"><img src="https://img.shields.io/badge/uv-dependency%20manager-DE5FE9?style=flat-square" alt="Dependencies managed with uv"></a>
+  <a href="core/service.py"><img src="https://img.shields.io/badge/SSH-Paramiko-14B8A6?style=flat-square" alt="SSH powered by Paramiko"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-F59E0B?style=flat-square" alt="MIT License"></a>
+</p>
+
+<p align="center">
+  <a href="README.md" lang="en">English</a> · <a href="README.zh-CN.md" lang="zh-CN">简体中文</a>
+</p>
+
+---
 
 SSH Service Runner is a Python application for inspecting and restarting remote services over SSH. Connection parameters, process keywords, and service commands are configured through YAML files or environment variables. Dependencies and the runtime environment are managed with [uv](https://docs.astral.sh/uv/).
 
@@ -14,31 +29,38 @@ sequenceDiagram
 
     Note over Runner: Load configuration<br/>Apply environment overrides<br/>Validate required settings
     Runner->>Host: Establish SSH session
-    loop Each configured process keyword
-        Runner->>Host: Query process status
-        Host-->>Runner: Process listing
+    rect rgba(59, 130, 246, 0.12)
+        loop Each configured process keyword
+            Runner->>Host: Query process status
+            Host-->>Runner: Process listing
+        end
+        Runner->>Log: Record process status
     end
-    Runner->>Log: Record process status
-    Runner->>Host: Execute StopCommand in ServicePath
-    Host-->>Runner: Command stdout
-    Runner->>Log: Record command output
-    Runner->>Host: Execute StartCommand in ServicePath
-    Host-->>Runner: Command stdout
-    Runner->>Log: Record command output
+    rect rgba(245, 158, 11, 0.12)
+        Runner->>Host: Execute StopCommand in ServicePath
+        Host-->>Runner: Command stdout
+        Runner->>Log: Record command output
+    end
+    rect rgba(20, 184, 166, 0.12)
+        Runner->>Host: Execute StartCommand in ServicePath
+        Host-->>Runner: Command stdout
+        Runner->>Log: Record command output
+    end
     Runner->>Host: Close SSH session
 ```
 
 The application runs locally and coordinates remote operations within an SSH session. After configuration validation, it queries the configured process keywords, then executes `StopCommand` followed by `StartCommand` in `ServicePath`. Process status and command standard output are recorded locally. The session is closed after normal completion.
 
-Process inspection provides status information and does not determine whether the restart commands execute. Remote command exit codes are not evaluated; see [Current behavior and limitations](#current-behavior-and-limitations).
+> [!NOTE]
+> Process inspection provides status information and does not determine whether the restart commands execute. Remote command exit codes are not evaluated; see [Current behavior and limitations](#current-behavior-and-limitations).
 
 ## Features
 
-- Connect to a remote server with Paramiko.
-- Check processes using configurable keywords.
-- Execute the configured stop command, followed by the start command.
-- Keep server settings and credentials in ignored local configuration or environment variables.
-- Write execution logs to a configurable UTF-8 log file.
+- 🔐 Connect to a remote server with Paramiko.
+- 🔎 Check processes using configurable keywords.
+- 🔄 Execute the configured stop command, followed by the start command.
+- ⚙️ Keep server settings and credentials in ignored local configuration or environment variables.
+- 📝 Write execution logs to a configurable UTF-8 log file.
 
 ## Requirements
 
@@ -108,7 +130,8 @@ Then run:
 uv run --locked python start.py
 ```
 
-**Running the script restarts the configured service.** Every run checks processes, logs the result, executes `StopCommand`, executes `StartCommand`, and closes the SSH connection on the normal completion path. The process check is informational: a missing process does not skip the restart.
+> [!WARNING]
+> **Running the script restarts the configured service.** Every run checks processes, logs the result, executes `StopCommand`, executes `StartCommand`, and closes the SSH connection on the normal completion path. The process check is informational: a missing process does not skip the restart.
 
 The committed `config/config.yml` is a template with empty connection and command fields. Fill in your local settings before running; incomplete configuration fails before connecting to a server.
 

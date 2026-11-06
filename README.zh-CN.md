@@ -1,6 +1,21 @@
-# SSH Service Runner
+<p align="center">
+  <img src="assets/ssh-service-runner.png" alt="SSH Service Runner 图标" width="112" height="112">
+</p>
 
-[English](README.md) | [简体中文](README.zh-CN.md)
+<h1 align="center">SSH Service Runner</h1>
+
+<p align="center">
+  <a href="pyproject.toml"><img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white" alt="Python 3.10 或更新版本"></a>
+  <a href="uv.lock"><img src="https://img.shields.io/badge/uv-dependency%20manager-DE5FE9?style=flat-square" alt="使用 uv 管理依赖"></a>
+  <a href="core/service.py"><img src="https://img.shields.io/badge/SSH-Paramiko-14B8A6?style=flat-square" alt="通过 Paramiko 使用 SSH"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-F59E0B?style=flat-square" alt="MIT 许可证"></a>
+</p>
+
+<p align="center">
+  <a href="README.md" lang="en">English</a> · <a href="README.zh-CN.md" lang="zh-CN">简体中文</a>
+</p>
+
+---
 
 SSH Service Runner 是一个通过 SSH 检查和重启远程服务的 Python 工具。服务器连接参数、进程检查关键字和服务命令通过 YAML 文件或环境变量配置，使用 [uv](https://docs.astral.sh/uv/) 管理依赖与运行环境。
 
@@ -14,31 +29,38 @@ sequenceDiagram
 
     Note over Runner: 加载配置文件<br/>应用环境变量覆盖<br/>校验必要配置项
     Runner->>Host: 建立 SSH 会话
-    loop 逐项处理进程检查关键字
-        Runner->>Host: 查询进程状态
-        Host-->>Runner: 返回进程列表
+    rect rgba(59, 130, 246, 0.12)
+        loop 逐项处理进程检查关键字
+            Runner->>Host: 查询进程状态
+            Host-->>Runner: 返回进程列表
+        end
+        Runner->>Log: 记录进程状态
     end
-    Runner->>Log: 记录进程状态
-    Runner->>Host: 在 ServicePath 中执行 StopCommand
-    Host-->>Runner: 返回命令标准输出
-    Runner->>Log: 记录命令输出
-    Runner->>Host: 在 ServicePath 中执行 StartCommand
-    Host-->>Runner: 返回命令标准输出
-    Runner->>Log: 记录命令输出
+    rect rgba(245, 158, 11, 0.12)
+        Runner->>Host: 在 ServicePath 中执行 StopCommand
+        Host-->>Runner: 返回命令标准输出
+        Runner->>Log: 记录命令输出
+    end
+    rect rgba(20, 184, 166, 0.12)
+        Runner->>Host: 在 ServicePath 中执行 StartCommand
+        Host-->>Runner: 返回命令标准输出
+        Runner->>Log: 记录命令输出
+    end
     Runner->>Host: 关闭 SSH 会话
 ```
 
 程序在本地运行，通过 SSH 会话协调远程操作。配置校验通过后，程序根据配置的关键字查询进程状态，随后在 `ServicePath` 中依次执行 `StopCommand` 和 `StartCommand`。进程状态与命令标准输出写入本地日志，执行正常完成后关闭会话。
 
-进程检查仅提供状态信息，不决定是否执行重启命令。程序不检查远程命令退出码，具体限制参见[当前行为与限制](#当前行为与限制)。
+> [!NOTE]
+> 进程检查仅提供状态信息，不决定是否执行重启命令。程序不检查远程命令退出码，具体限制参见[当前行为与限制](#当前行为与限制)。
 
 ## 功能
 
-- 使用 Paramiko 连接远程服务器。
-- 根据可配置的关键字检查进程。
-- 依次执行配置的停止命令和启动命令。
-- 通过 Git 忽略的本地配置或环境变量保存服务器设置与凭据。
-- 将执行日志写入可配置的 UTF-8 日志文件。
+- 🔐 使用 Paramiko 连接远程服务器。
+- 🔎 根据可配置的关键字检查进程。
+- 🔄 依次执行配置的停止命令和启动命令。
+- ⚙️ 通过 Git 忽略的本地配置或环境变量保存服务器设置与凭据。
+- 📝 将执行日志写入可配置的 UTF-8 日志文件。
 
 ## 环境要求
 
@@ -108,7 +130,8 @@ echo
 uv run --locked python start.py
 ```
 
-**运行脚本会重启配置的服务。** 每次运行都会检查进程、记录结果、执行 `StopCommand`、执行 `StartCommand`，并在正常完成后关闭 SSH 连接。进程检查只提供状态信息；没有找到进程时，程序仍会执行停止和启动命令。
+> [!WARNING]
+> **运行脚本会重启配置的服务。** 每次运行都会检查进程、记录结果、执行 `StopCommand`、执行 `StartCommand`，并在正常完成后关闭 SSH 连接。进程检查只提供状态信息；没有找到进程时，程序仍会执行停止和启动命令。
 
 仓库中的 `config/config.yml` 是模板，连接信息和命令字段均为空。请先填写本地配置；配置不完整时，程序会在连接服务器之前报错。
 
