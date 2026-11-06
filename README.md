@@ -2,27 +2,35 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-<img src="assets/ssh-service-runner.png" alt="SSH Service Runner: terminal and restart arrow" width="96" height="96">
+SSH Service Runner is a Python application for inspecting and restarting remote services over SSH. Connection parameters, process keywords, and service commands are configured through YAML files or environment variables. Dependencies and the runtime environment are managed with [uv](https://docs.astral.sh/uv/).
 
-A small Python utility for checking and restarting remote services over SSH. It can be run from a terminal or a Windows desktop shortcut, with dependencies managed by [uv](https://docs.astral.sh/uv/).
-
-## How it works
+## Execution flow
 
 ```mermaid
-flowchart TD
-    A[Terminal or Windows shortcut] --> B[Read YAML configuration]
-    B --> C[Apply environment overrides]
-    C --> D{Configuration valid?}
-    D -->|No| E[Report an English configuration error]
-    D -->|Yes| F[Initialize SSH client and connect]
-    F --> G[Check remote processes with ps and grep]
-    G --> H[Log process check results]
-    H --> I[Execute stop command]
-    I --> J[Execute start command]
-    J --> K[Close SSH connection]
+sequenceDiagram
+    participant Runner as SSH Service Runner
+    participant Host as Remote SSH server
+    participant Log as Local log file
+
+    Note over Runner: Load configuration<br/>Apply environment overrides<br/>Validate required settings
+    Runner->>Host: Establish SSH session
+    loop Each configured process keyword
+        Runner->>Host: Query process status
+        Host-->>Runner: Process listing
+    end
+    Runner->>Log: Record process status
+    Runner->>Host: Execute StopCommand in ServicePath
+    Host-->>Runner: Command stdout
+    Runner->>Log: Record command output
+    Runner->>Host: Execute StartCommand in ServicePath
+    Host-->>Runner: Command stdout
+    Runner->>Log: Record command output
+    Runner->>Host: Close SSH session
 ```
 
-The diagram shows the normal SSH execution path. The process check does not gate the restart, and remote command exit codes are not inspected. Logs include the process check results and command stdout.
+The application runs locally and coordinates remote operations within an SSH session. After configuration validation, it queries the configured process keywords, then executes `StopCommand` followed by `StartCommand` in `ServicePath`. Process status and command standard output are recorded locally. The session is closed after normal completion.
+
+Process inspection provides status information and does not determine whether the restart commands execute. Remote command exit codes are not evaluated; see [Current behavior and limitations](#current-behavior-and-limitations).
 
 ## Features
 

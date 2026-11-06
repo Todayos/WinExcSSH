@@ -2,27 +2,35 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-<img src="assets/ssh-service-runner.png" alt="SSH Service Runner：终端与重启箭头" width="96" height="96">
+SSH Service Runner 是一个通过 SSH 检查和重启远程服务的 Python 工具。服务器连接参数、进程检查关键字和服务命令通过 YAML 文件或环境变量配置，使用 [uv](https://docs.astral.sh/uv/) 管理依赖与运行环境。
 
-通过 SSH 检查和重启远程服务的轻量 Python 工具。支持从终端或 Windows 桌面快捷方式运行，使用 [uv](https://docs.astral.sh/uv/) 管理依赖。
-
-## 工作原理
+## 执行流程
 
 ```mermaid
-flowchart TD
-    A["终端或 Windows 快捷方式"] --> B["读取 YAML 配置"]
-    B --> C["应用环境变量覆盖"]
-    C --> D{"配置是否有效？"}
-    D -->|否| E["输出英文配置错误"]
-    D -->|是| F["初始化 SSH 客户端并连接"]
-    F --> G["使用 ps 和 grep 检查远程进程"]
-    G --> H["记录进程检查结果"]
-    H --> I["执行停止命令"]
-    I --> J["执行启动命令"]
-    J --> K["关闭 SSH 连接"]
+sequenceDiagram
+    participant Runner as SSH Service Runner
+    participant Host as 远程 SSH 服务器
+    participant Log as 本地日志文件
+
+    Note over Runner: 加载配置文件<br/>应用环境变量覆盖<br/>校验必要配置项
+    Runner->>Host: 建立 SSH 会话
+    loop 逐项处理进程检查关键字
+        Runner->>Host: 查询进程状态
+        Host-->>Runner: 返回进程列表
+    end
+    Runner->>Log: 记录进程状态
+    Runner->>Host: 在 ServicePath 中执行 StopCommand
+    Host-->>Runner: 返回命令标准输出
+    Runner->>Log: 记录命令输出
+    Runner->>Host: 在 ServicePath 中执行 StartCommand
+    Host-->>Runner: 返回命令标准输出
+    Runner->>Log: 记录命令输出
+    Runner->>Host: 关闭 SSH 会话
 ```
 
-上图展示 SSH 正常执行时的流程。进程检查结果不会阻止重启，程序也不会检查远程命令的退出码。日志包含进程检查结果和命令的标准输出。
+程序在本地运行，通过 SSH 会话协调远程操作。配置校验通过后，程序根据配置的关键字查询进程状态，随后在 `ServicePath` 中依次执行 `StopCommand` 和 `StartCommand`。进程状态与命令标准输出写入本地日志，执行正常完成后关闭会话。
+
+进程检查仅提供状态信息，不决定是否执行重启命令。程序不检查远程命令退出码，具体限制参见[当前行为与限制](#当前行为与限制)。
 
 ## 功能
 
